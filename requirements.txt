@@ -1,18 +1,7 @@
-# Flask 框架
-Flask==3.0.2
-
-# 数据库
-Flask-SQLAlchemy==3.1.1
-pymysql==1.1.0
-
-# 用户认证
-Flask-Login==0.6.3
-
-# 表单处理
-Flask-WTF==1.2.1
-
-# 环境变量
-python-dotenv==1.0.0
-
-# 密码哈希
-Werkzeug==3.0.1
+Flask==3.0.2 
+Flask-SQLAlchemy==3.1.1 
+pymysql==1.1.0 
+Flask-Login==0.6.3 
+Flask-WTF==1.2.1 
+python-dotenv==1.0.0 
+Werkzeug==3.0.1 
