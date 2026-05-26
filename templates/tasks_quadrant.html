@@ -1,0 +1,99 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\tasks_quadrant.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-primary">四象限视图</h2>
+<p class="text-muted">拖拽任务卡片调整优先级</p>
+
+<div class="quadrant-grid mt-4">
+    <!-- 重要且紧急 -->
+    <div class="card quadrant-card quadrant-1" data-priority="1">
+        <div class="card-header bg-danger bg-opacity-10">
+            <h5 class="text-danger">🔴 重要且紧急</h5>
+            <span class="badge bg-danger">{{ quadrant1|length }}</span>
+        </div>
+        <div class="card-body">
+            <div class="task-list">
+                {% for task in quadrant1 %}
+                <div class="task-card card mb-2" draggable="true" data-task-id="{{ task.id }}">
+                    <div class="card-body p-3">
+                        <h6>{{ task.title }}</h6>
+                        {% if task.deadline %}
+                        <p class="text-sm text-danger">{{ task.deadline.strftime('%m-%d %H:%M') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 重要不紧急 -->
+    <div class="card quadrant-card quadrant-2" data-priority="2">
+        <div class="card-header bg-primary bg-opacity-10">
+            <h5 class="text-primary">🟢 重要不紧急</h5>
+            <span class="badge bg-primary">{{ quadrant2|length }}</span>
+        </div>
+        <div class="card-body">
+            <div class="task-list">
+                {% for task in quadrant2 %}
+                <div class="task-card card mb-2" draggable="true" data-task-id="{{ task.id }}">
+                    <div class="card-body p-3">
+                        <h6>{{ task.title }}</h6>
+                        {% if task.deadline %}
+                        <p class="text-sm text-muted">{{ task.deadline.strftime('%m-%d %H:%M') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 紧急不重要 -->
+    <div class="card quadrant-card quadrant-3" data-priority="3">
+        <div class="card-header bg-secondary bg-opacity-10">
+            <h5 class="text-secondary">🟠 紧急不重要</h5>
+            <span class="badge bg-secondary">{{ quadrant3|length }}</span>
+        </div>
+        <div class="card-body">
+            <div class="task-list">
+                {% for task in quadrant3 %}
+                <div class="task-card card mb-2" draggable="true" data-task-id="{{ task.id }}">
+                    <div class="card-body p-3">
+                        <h6>{{ task.title }}</h6>
+                        {% if task.deadline %}
+                        <p class="text-sm text-muted">{{ task.deadline.strftime('%m-%d %H:%M') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 不重要不紧急 -->
+    <div class="card quadrant-card quadrant-4" data-priority="4">
+        <div class="card-header bg-gray bg-opacity-10">
+            <h5 class="text-gray">⚪ 不重要不紧急</h5>
+            <span class="badge bg-gray">{{ quadrant4|length }}</span>
+        </div>
+        <div class="card-body">
+            <div class="task-list">
+                {% for task in quadrant4 %}
+                <div class="task-card card mb-2" draggable="true" data-task-id="{{ task.id }}">
+                    <div class="card-body p-3">
+                        <h6>{{ task.title }}</h6>
+                        {% if task.deadline %}
+                        <p class="text-sm text-muted">{{ task.deadline.strftime('%m-%d %H:%M') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/drag-drop.js') }}"></script>
+{% endblock %}

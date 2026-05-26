@@ -1,0 +1,63 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\buddies.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">学习搭子</h2>
+    <a href="{{ url_for('add_buddy') }}" class="btn btn-primary">
+        <i class="fas fa-user-plus"></i> 添加搭子
+    </a>
+</div>
+
+{% if buddy_stats %}
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">搭子列表（按今日专注时长排序）</h4>
+    </div>
+    <div class="card-body">
+        <div class="list-group">
+            {% for stat in buddy_stats %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img src="https://via.placeholder.com/50" class="rounded-circle me-3" alt="头像">
+                    <div>
+                        <h5>{{ stat.user.nickname }}</h5>
+                        <p class="text-muted text-sm">{{ stat.user.username }}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-primary font-weight-bold">{{ stat.today_focus }} 分钟</p>
+                    <p class="text-muted text-sm">今日专注</p>
+                </div>
+                <a href="{{ url_for('buddy_detail', buddy_id=stat.user.id) }}" class="btn btn-outline-primary ml-4">
+                    查看详情
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-8">
+        <i class="fas fa-users fa-5x text-muted mb-4"></i>
+        <h4 class="text-muted">暂无搭子</h4>
+        <p class="text-muted">输入对方的邀请码添加学习搭子</p>
+        <a href="{{ url_for('add_buddy') }}" class="btn btn-primary mt-4">添加搭子</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- 我的邀请码 -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h4 class="mb-0">🔑 我的邀请码</h4>
+    </div>
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted">分享此邀请码给朋友，一起学习</span>
+            <span class="font-mono text-primary font-weight-bold text-lg">{{ current_user.invite_code }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

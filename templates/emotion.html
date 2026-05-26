@@ -1,0 +1,96 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\emotion.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">情绪记录</h2>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>今日心情</h4>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="/add_emotion">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="mb-4">
+                <label class="form-label">选择情绪</label>
+                <div class="d-flex gap-3">
+                    <button type="button" class="emotion-btn btn btn-outline-primary" data-emotion="happy">😊 开心</button>
+                    <button type="button" class="emotion-btn btn btn-outline-primary" data-emotion="calm">😌 平静</button>
+                    <button type="button" class="emotion-btn btn btn-outline-primary" data-emotion="anxious">😰 焦虑</button>
+                    <button type="button" class="emotion-btn btn btn-outline-primary" data-emotion="tired">😴 疲惫</button>
+                    <button type="button" class="emotion-btn btn btn-outline-primary" data-emotion="frustrated">😤 沮丧</button>
+                </div>
+                <input type="hidden" name="emotion_type" id="emotion-type" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">记录（可选，最多100字）</label>
+                <textarea name="note" class="form-control" rows="2" maxlength="100"></textarea>
+            </div>
+
+            <div class="mb-4">
+                <select name="visibility" class="form-select">
+                    <option value="private">仅自己可见</option>
+                    <option value="all_buddies">所有搭子可见</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">记录心情</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4>历史记录</h4>
+    </div>
+    <div class="card-body">
+        {% if emotions %}
+        <div class="list-group">
+            {% for emotion in emotions %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="me-3">
+                        {% if emotion.emotion_type == 1 %}😊
+                        {% elif emotion.emotion_type == 2 %}😌
+                        {% elif emotion.emotion_type == 3 %}😰
+                        {% elif emotion.emotion_type == 4 %}😴
+                        {% elif emotion.emotion_type == 5 %}😤
+                        {% endif %}
+                    </span>
+                    <div>
+                        <p class="font-weight-bold">{{ emotion.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        {% if emotion.note %}
+                        <p class="text-muted text-sm">{{ emotion.note }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <span class="badge {% if emotion.visibility == 2 %}bg-primary{% else %}bg-secondary{% endif %}">
+                        {{ '搭子可见' if emotion.visibility == 2 else '仅自己可见' }}
+                    </span>
+                    <a href="{{ url_for('delete_emotion', emotion_id=emotion.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除？')">
+                        删除
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-8">还没有记录情绪</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.emotion-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('active', 'btn-primary'));
+        this.classList.add('active', 'btn-primary');
+        document.getElementById('emotion-type').value = this.dataset.emotion;
+    });
+});
+</script>
+{% endblock %}

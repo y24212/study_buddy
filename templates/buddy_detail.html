@@ -1,0 +1,126 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\buddy_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <img src="https://via.placeholder.com/80" class="rounded-circle me-4" alt="头像">
+                <div>
+                    <h2>{{ buddy.nickname }}</h2>
+                    <p class="text-muted">{{ buddy.username }}</p>
+                </div>
+            </div>
+            <a href="{{ url_for('remove_buddy', buddy_id=buddy.id) }}" class="btn btn-outline-danger" onclick="return confirm('确定解除搭子关系？')">
+                解除关系
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <p class="text-muted">今日专注</p>
+                <h3 class="text-primary">{{ today_focus }} 分钟</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <p class="text-muted">本周专注</p>
+                <h3 class="text-primary">{{ week_focus }} 分钟</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>📋 公开任务</h4>
+    </div>
+    <div class="card-body">
+        {% if tasks %}
+        <div class="list-group">
+            {% for task in tasks %}
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>{{ task.title }}</h5>
+                        <span class="badge bg-primary">{{ task_category[task.category] }}</span>
+                        <span class="badge {% if task.status == 3 %}bg-success{% else %}bg-secondary{% endif %}">{{ task_status[task.status] }}</span>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm like-btn" data-task-id="{{ task.id }}">
+                        <i class="fas fa-thumbs-up"></i> 点赞
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-4">暂无公开任务</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if schedules %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>📅 课表</h4>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>课程</th>
+                    <th>时间</th>
+                    <th>地点</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in schedules %}
+                <tr>
+                    <td>{{ schedule.course_name }}</td>
+                    <td>周{{ schedule.day_of_week }} 第{{ schedule.start_period }}-{{ schedule.end_period }}节</td>
+                    <td>{{ schedule.location }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if emotions %}
+<div class="card">
+    <div class="card-header">
+        <h4>💭 情绪记录</h4>
+    </div>
+    <div class="card-body">
+        <div class="list-group">
+            {% for emotion in emotions %}
+            <div class="list-group-item d-flex justify-content-between">
+                <div>
+                    <span class="text-muted">{{ emotion.created_at.strftime('%m-%d') }}</span>
+                    <span class="ml-2">
+                        {% if emotion.emotion_type == 1 %}😊
+                        {% elif emotion.emotion_type == 2 %}😌
+                        {% elif emotion.emotion_type == 3 %}😰
+                        {% elif emotion.emotion_type == 4 %}😴
+                        {% elif emotion.emotion_type == 5 %}😤
+                        {% endif %}
+                    </span>
+                    {% if emotion.note %}
+                    <p class="text-muted text-sm mt-1">{{ emotion.note }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

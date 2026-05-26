@@ -1,0 +1,82 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\import_schedule.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-primary">导入课表</h2>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle"></i> 如果无法看到下载按钮，可以使用 <a href="{{ url_for('add_schedule') }}" class="alert-link">手动添加课程</a> 功能
+        </div>
+        
+        <div class="mb-4">
+            <label class="form-label">教务系统网址</label>
+            <div class="input-group">
+                <input type="text" id="edu-url" class="form-control" 
+                       value="http://jwc.njucm.edu.cn" placeholder="输入教务系统网址">
+                <button id="go-btn" class="btn btn-primary">
+                    <i class="fas fa-check"></i> 前往登录
+                </button>
+            </div>
+        </div>
+
+        <div class="p-4 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-lg border border-primary/10">
+            <h5 class="text-primary mb-3">📌 一键导入操作步骤</h5>
+            <ol class="text-muted text-sm space-y-1">
+                <li><strong>确认网址：</strong>确认教务系统网址正确（通常是学校教务处官网）</li>
+                <li><strong>前往登录：</strong>点击"前往登录"按钮跳转到教务系统</li>
+                <li><strong>登录课表：</strong>在教务系统中登录并导航到"我的课表"页面</li>
+                <li><strong>下载课表：</strong>页面右下角会出现蓝色下载按钮</li>
+                <li><strong>完成导入：</strong>点击下载按钮，系统自动提取课表数据</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header bg-gradient-to-r from-secondary/10 to-primary/10">
+        <h5 class="text-secondary">⚡ 快速替代方案</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <a href="{{ url_for('add_schedule') }}" class="btn btn-primary w-full py-3">
+                    <i class="fas fa-plus-circle"></i> 手动添加课程
+                </a>
+                <p class="text-muted text-sm mt-2 text-center">适合课程较少的情况</p>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-outline-primary w-full py-3" data-bs-toggle="modal" data-bs-target="#batch-import-modal">
+                    <i class="fas fa-file-upload"></i> 批量导入课程
+                </button>
+                <p class="text-muted text-sm mt-2 text-center">通过表格批量导入</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 批量导入弹窗 -->
+<div class="modal fade" id="batch-import-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">批量导入课程</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted text-sm mb-3">请按照以下格式输入课程信息，每行一门课程：</p>
+                <p class="text-secondary text-sm"><strong>格式：</strong>课程名称|教师|地点|星期|开始节次-结束节次|周次</p>
+                <p class="text-secondary text-sm"><strong>示例：</strong>高等数学|张老师|教学楼A302|1|1-2|1-16</p>
+                <textarea class="form-control" rows="6" placeholder="高等数学|张老师|教学楼A302|1|1-2|1-16&#10;线性代数|李老师|实验楼B201|3|3-4|1-16"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary">导入课程</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/schedule-import.js') }}"></script>
+{% endblock %}

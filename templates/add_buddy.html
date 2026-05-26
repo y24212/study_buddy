@@ -1,0 +1,30 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\add_buddy.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-primary">添加学习搭子</h2>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="mb-4">
+                <label class="form-label">输入对方的8位邀请码</label>
+                <div class="input-group">
+                    <input type="text" name="invite_code" class="form-control" placeholder="请输入8位邀请码" maxlength="8" required>
+                    <button type="submit" class="btn btn-primary">发送申请</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="mt-4 p-4 bg-light rounded-lg">
+            <h5>📌 使用说明</h5>
+            <ul class="text-muted text-sm">
+                <li>邀请码是8位大写字母和数字组合</li>
+                <li>对方需要同意后才能成为搭子</li>
+                <li>搭子关系建立后可以互相查看学习进度</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

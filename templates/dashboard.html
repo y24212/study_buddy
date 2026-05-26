@@ -1,0 +1,90 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\dashboard.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%); color: var(--primary-color);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value">{{ today_focus_time }}</div>
+            <div class="stat-label">今日专注时长（分钟）</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%); color: var(--secondary-color);">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-value">{{ completion_rate }}%</div>
+            <div class="stat-label">本周任务完成率</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%); color: var(--info-color);">
+                <i class="fas fa-list-check"></i>
+            </div>
+            <div class="stat-value">{{ today_tasks|length }}</div>
+            <div class="stat-label">今日待办（项）</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">📋 今日待办</h4>
+    </div>
+    <div class="card-body">
+        {% if today_tasks %}
+        <div class="space-y-3">
+            {% for task in today_tasks %}
+            <div class="task-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-1">
+                        <h5 class="mb-1">{{ task.title }}</h5>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-primary">{{ task_category[task.category] }}</span>
+                            {% if task.deadline %}
+                            <span class="text-muted text-sm">{{ task.deadline.strftime('%H:%M') }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="{{ url_for('edit_task', task_id=task.id) }}" class="text-primary ml-4">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-8">今日暂无待办任务</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">⚡ 快捷操作</h4>
+    </div>
+    <div class="card-body">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <a href="{{ url_for('add_task') }}" class="btn btn-primary w-full py-3">
+                <i class="fas fa-plus"></i> 添加任务
+            </a>
+            <a href="{{ url_for('pomodoro') }}" class="btn btn-secondary w-full py-3">
+                <i class="fas fa-clock"></i> 开始专注
+            </a>
+            <a href="{{ url_for('add_buddy') }}" class="btn btn-outline-primary w-full py-3">
+                <i class="fas fa-user-plus"></i> 添加搭子
+            </a>
+            <a href="{{ url_for('emotion') }}" class="btn btn-outline-secondary w-full py-3">
+                <i class="fas fa-heart"></i> 记录情绪
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

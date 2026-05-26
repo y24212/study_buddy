@@ -1,0 +1,98 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\match_schedule.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-primary">空闲时间匹配</h2>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label class="form-label">选择搭子</label>
+                <select id="buddy-select" class="form-select">
+                    <option value="">请选择搭子</option>
+                    {% for buddy in buddies %}
+                    <option value="{{ buddy.id }}" {% if selected_buddy_id == buddy.id %}selected{% endif %}>{{ buddy.nickname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">选择日期</label>
+                <input type="date" id="date-select" class="form-control" value="{{ selected_date }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">&nbsp;</label>
+                <button id="match-btn" class="btn btn-primary w-100">匹配空闲时间</button>
+            </div>
+        </div>
+
+        {% if match_result %}
+        <div class="mt-4">
+            <h4>🎯 匹配结果</h4>
+            <div class="list-group">
+                {% for slot in match_result %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>第{{ slot.start }}-{{ slot.end }}节课</span>
+                    <button class="btn btn-primary invite-btn" 
+                            data-buddy-id="{{ selected_buddy_id }}"
+                            data-date="{{ selected_date }}"
+                            data-start="{{ slot.start }}"
+                            data-end="{{ slot.end }}">
+                        发起自习邀请
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% elif selected_buddy_id %}
+        <div class="mt-4 text-center py-8">
+            <i class="fas fa-calendar-times fa-5x text-muted mb-4"></i>
+            <p class="text-muted">当天没有共同空闲时间</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.getElementById('match-btn').addEventListener('click', function() {
+    const buddyId = document.getElementById('buddy-select').value;
+    const date = document.getElementById('date-select').value;
+    
+    if (!buddyId) {
+        alert('请先选择搭子');
+        return;
+    }
+    
+    window.location.href = `/match_schedule?buddy_id=${buddyId}&date=${date}`;
+});
+
+document.querySelectorAll('.invite-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const buddyId = this.dataset.buddyId;
+        const date = this.dataset.date;
+        const startPeriod = this.dataset.start;
+        const endPeriod = this.dataset.end;
+        
+        fetch('/send_study_invite', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                buddy_id: buddyId,
+                date: date,
+                start_period: startPeriod,
+                end_period: endPeriod
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('邀请已发送');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

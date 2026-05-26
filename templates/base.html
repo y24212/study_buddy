@@ -1,0 +1,109 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\base.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习搭子系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+    <!-- 桌面端侧边栏 -->
+    <nav class="sidebar d-none d-md-block">
+        <div class="logo-section">
+            <h3 class="logo"><i class="fas fa-book-open"></i> 学习搭子</h3>
+        </div>
+        <div class="nav flex-column">
+            <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-home"></i> 首页
+            </a>
+            <a href="{{ url_for('tasks') }}" class="nav-link {% if request.endpoint in ['tasks', 'add_task', 'edit_task'] %}active{% endif %}">
+                <i class="fas fa-list-check"></i> 任务管理
+            </a>
+            <a href="{{ url_for('tasks_quadrant') }}" class="nav-link {% if request.endpoint == 'tasks_quadrant' %}active{% endif %}">
+                <i class="fas fa-grid-2x2"></i> 四象限
+            </a>
+            <a href="{{ url_for('pomodoro') }}" class="nav-link {% if request.endpoint == 'pomodoro' %}active{% endif %}">
+                <i class="fas fa-clock"></i> 番茄钟
+            </a>
+            <a href="{{ url_for('schedule') }}" class="nav-link {% if request.endpoint in ['schedule', 'import_schedule'] %}active{% endif %}">
+                <i class="fas fa-calendar"></i> 课表
+            </a>
+            <a href="{{ url_for('buddies') }}" class="nav-link {% if request.endpoint in ['buddies', 'add_buddy', 'buddy_detail'] %}active{% endif %}">
+                <i class="fas fa-users"></i> 搭子
+            </a>
+            <a href="{{ url_for('match_schedule') }}" class="nav-link {% if request.endpoint == 'match_schedule' %}active{% endif %}">
+                <i class="fas fa-calendar-check"></i> 空闲匹配
+            </a>
+            <a href="{{ url_for('emotion') }}" class="nav-link {% if request.endpoint == 'emotion' %}active{% endif %}">
+                <i class="fas fa-heart"></i> 情绪记录
+            </a>
+            <a href="{{ url_for('stats') }}" class="nav-link {% if request.endpoint == 'stats' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i> 数据统计
+            </a>
+            <a href="{{ url_for('profile') }}" class="nav-link {% if request.endpoint in ['profile', 'edit_profile'] %}active{% endif %}">
+                <i class="fas fa-user"></i> 个人主页
+            </a>
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> 退出登录
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 顶部通知栏 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary">{{ title }}</h2>
+            <div class="position-relative">
+                <a href="{{ url_for('notifications') }}" class="text-dark">
+                    <i class="fas fa-bell fa-lg"></i>
+                    {% if unread_count and unread_count > 0 %}
+                    <span class="notification-badge">{{ unread_count }}</span>
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+
+        <!-- 消息提示 -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- 页面内容 -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 移动端底部导航 -->
+    <nav class="mobile-nav">
+        <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="{{ url_for('tasks') }}" class="nav-link {% if request.endpoint in ['tasks', 'add_task', 'edit_task'] %}active{% endif %}">
+            <i class="fas fa-list-check"></i>
+        </a>
+        <a href="{{ url_for('pomodoro') }}" class="nav-link {% if request.endpoint == 'pomodoro' %}active{% endif %}">
+            <i class="fas fa-clock"></i>
+        </a>
+        <a href="{{ url_for('buddies') }}" class="nav-link {% if request.endpoint in ['buddies', 'add_buddy'] %}active{% endif %}">
+            <i class="fas fa-users"></i>
+        </a>
+        <a href="{{ url_for('profile') }}" class="nav-link {% if request.endpoint in ['profile', 'edit_profile'] %}active{% endif %}">
+            <i class="fas fa-user"></i>
+        </a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

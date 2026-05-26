@@ -1,0 +1,92 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\add_task.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-primary">添加任务</h2>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="mb-4">
+                <label class="form-label">任务标题</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">任务描述</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">分类</label>
+                    <select name="category" class="form-select" required>
+                        <option value="学习">学习</option>
+                        <option value="作业">作业</option>
+                        <option value="考试">考试</option>
+                        <option value="生活">生活</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">优先级</label>
+                    <select name="priority" class="form-select" required>
+                        <option value="1">重要且紧急</option>
+                        <option value="2">重要不紧急</option>
+                        <option value="3">紧急不重要</option>
+                        <option value="4">不重要不紧急</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">开始时间</label>
+                    <input type="datetime-local" name="start_time" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">截止时间</label>
+                    <input type="datetime-local" name="deadline" class="form-control">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">可见性</label>
+                <select name="visibility" class="form-select" required onchange="toggleBuddySelection()">
+                    <option value="private">仅自己可见</option>
+                    <option value="all_buddies">所有搭子可见</option>
+                    <option value="specific_buddies">指定搭子可见</option>
+                </select>
+            </div>
+
+            <div id="buddy-selection" class="mb-4" style="display: none;">
+                <label class="form-label">选择可见的搭子</label>
+                <div class="row">
+                    {% for buddy in buddies %}
+                    <div class="col-md-4">
+                        <div class="form-check">
+                            <input type="checkbox" name="visible_buddies" value="{{ buddy.id }}" class="form-check-input">
+                            <label class="form-check-label">{{ buddy.nickname }}</label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn btn-primary">保存任务</button>
+                <a href="{{ url_for('tasks') }}" class="btn btn-outline-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleBuddySelection() {
+    const visibility = document.querySelector('select[name="visibility"]').value;
+    const buddySelection = document.getElementById('buddy-selection');
+    buddySelection.style.display = visibility === 'specific_buddies' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

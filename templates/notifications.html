@@ -1,0 +1,58 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\notifications.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-primary">通知中心</h2>
+
+{% if notifications %}
+<div class="card">
+    <div class="card-body">
+        <div class="space-y-3">
+            {% for notification in notifications %}
+            <div class="notification-card p-4 rounded-xl border border-gray-100 bg-white hover:shadow-md transition-all duration-300">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-1">
+                        <div class="d-flex items-center gap-2 mb-2">
+                            <span class="notification-badge-icon">
+                                {% if notification.type == 1 %}👥
+                                {% elif notification.type == 2 %}📅
+                                {% elif notification.type == 3 %}📋
+                                {% else %}⚠️{% endif %}
+                            </span>
+                            <span class="badge bg-gradient-to-r from-primary/10 to-secondary/10 text-primary text-sm font-medium">
+                                {{ notification_type[notification.type] }}
+                            </span>
+                        </div>
+                        <p class="text-gray-800 font-medium mb-2">{{ notification.content }}</p>
+                        <p class="text-gray-400 text-sm">{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                    </div>
+                    {% if notification.type == 1 and notification.related_id %}
+                    <div class="d-flex gap-2 ml-4">
+                        <a href="{{ url_for('handle_buddy_request', request_id=notification.related_id, action='accept') }}" 
+                           class="btn btn-sm btn-primary bg-gradient-to-r from-primary to-primary-dark hover:shadow-lg transition-all duration-300">
+                            <i class="fas fa-check mr-1"></i> 接受
+                        </a>
+                        <a href="{{ url_for('handle_buddy_request', request_id=notification.related_id, action='reject') }}" 
+                           class="btn btn-sm btn-outline-secondary hover:bg-gray-100 transition-all duration-300">
+                            <i class="fas fa-times mr-1"></i> 拒绝
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card bg-gradient-to-br from-gray-50 to-white">
+    <div class="card-body text-center py-12">
+        <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full flex items-center justify-center">
+            <i class="fas fa-bell fa-4x text-primary/50"></i>
+        </div>
+        <h4 class="text-gray-600 mb-2">暂无通知</h4>
+        <p class="text-gray-400 text-sm">当有新的搭子申请或消息时，会在这里显示</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

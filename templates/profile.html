@@ -1,0 +1,86 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\profile.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <!-- 左侧信息卡片 -->
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <img 
+                    src="{{ url_for('static', filename='uploads/' + current_user.avatar) if current_user.avatar != 'default.jpg' else url_for('static', filename='assets/default-avatar.png') }}" 
+                    class="rounded-circle" 
+                    width="150" 
+                    height="150" 
+                    alt="头像"
+                >
+                <h2 class="mt-3">{{ current_user.nickname }}</h2>
+                <p class="text-secondary">{{ current_user.bio }}</p>
+                
+                <!-- 搭子邀请码 -->
+                <div class="mt-4 p-3 bg-light rounded-lg">
+                    <p class="text-sm text-secondary mb-1">搭子邀请码</p>
+                    <p class="font-mono text-primary font-bold">{{ current_user.invite_code }}</p>
+                </div>
+                
+                <a href="{{ url_for('edit_profile') }}" class="btn btn-primary mt-4">编辑资料</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 右侧统计信息 -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>📊 今日学习统计</h4>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-6">
+                        <div class="text-3xl font-bold text-primary">{{ today_focus_time }}</div>
+                        <div class="text-secondary">分钟专注</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-3xl font-bold text-secondary">{{ completion_rate }}%</div>
+                        <div class="text-secondary">本周任务完成率</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h4>👥 我的搭子</h4>
+            </div>
+            <div class="card-body">
+                {% set buddies = current_user.get_buddies() %}
+                {% if buddies %}
+                    <div class="row">
+                        {% for buddy in buddies[:4] %}
+                            <div class="col-md-3 mb-3">
+                                <div class="card text-center">
+                                    <img 
+                                        src="{{ url_for('static', filename='uploads/' + buddy.avatar) if buddy.avatar != 'default.jpg' else url_for('static', filename='assets/default-avatar.png') }}" 
+                                        class="rounded-circle mx-auto mt-3" 
+                                        width="60" 
+                                        height="60" 
+                                        alt="头像"
+                                    >
+                                    <h6 class="mt-2">{{ buddy.nickname }}</h6>
+                                    <a href="{{ url_for('buddy_detail', buddy_id=buddy.id) }}" class="btn btn-sm btn-outline-primary mb-2">查看详情</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if buddies|length > 4 %}
+                        <a href="{{ url_for('buddies') }}" class="text-primary">查看全部 {{ buddies|length }} 位搭子 →</a>
+                    {% endif %}
+                {% else %}
+                    <p class="text-center text-secondary">还没有搭子，快去添加吧！</p>
+                    <a href="{{ url_for('add_buddy') }}" class="btn btn-primary d-block mx-auto">添加搭子</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

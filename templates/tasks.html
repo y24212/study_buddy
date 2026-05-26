@@ -1,0 +1,91 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\tasks.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">任务管理</h2>
+    <a href="{{ url_for('add_task') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> 添加任务
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <select class="form-select" id="status-filter" onchange="filterTasks()">
+                    <option value="all" {% if filter_status == 'all' %}selected{% endif %}>全部状态</option>
+                    <option value="pending" {% if filter_status == 'pending' %}selected{% endif %}>未开始</option>
+                    <option value="in_progress" {% if filter_status == 'in_progress' %}selected{% endif %}>进行中</option>
+                    <option value="completed" {% if filter_status == 'completed' %}selected{% endif %}>已完成</option>
+                    <option value="overdue" {% if filter_status == 'overdue' %}selected{% endif %}>逾期</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" id="category-filter" onchange="filterTasks()">
+                    <option value="all" {% if filter_category == 'all' %}selected{% endif %}>全部分类</option>
+                    <option value="学习" {% if filter_category == '学习' %}selected{% endif %}>学习</option>
+                    <option value="作业" {% if filter_category == '作业' %}selected{% endif %}>作业</option>
+                    <option value="考试" {% if filter_category == '考试' %}selected{% endif %}>考试</option>
+                    <option value="生活" {% if filter_category == '生活' %}selected{% endif %}>生活</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">任务列表</h4>
+    </div>
+    <div class="card-body">
+        {% if tasks %}
+        <div class="list-group">
+            {% for task in tasks %}
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="flex-1">
+                    {% if task.is_top %}
+                    <span class="badge bg-secondary me-2">置顶</span>
+                    {% endif %}
+                    <h5 class="mb-1">{{ task.title }}</h5>
+                    <p class="text-muted text-sm mb-2">{{ task.description }}</p>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-primary">{{ task_category[task.category] }}</span>
+                        <span class="badge {% if task.status == 3 %}bg-success{% elif task.status == 4 %}bg-danger{% else %}bg-secondary{% endif %}">
+                            {{ task_status[task.status] }}
+                        </span>
+                        {% if task.deadline %}
+                        <span class="text-muted text-sm{% if task.status == 4 %} text-danger{% endif %}">
+                            截止: {{ task.deadline.strftime('%m-%d %H:%M') }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="d-flex flex-column gap-2 ml-4">
+                    <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{{ url_for('top_task', task_id=task.id) }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-arrow-up"></i>
+                    </a>
+                    <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除？')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-4">暂无任务</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function filterTasks() {
+    const status = document.getElementById('status-filter').value;
+    const category = document.getElementById('category-filter').value;
+    window.location.href = `/tasks?status=${status}&category=${category}`;
+}
+</script>
+{% endblock %}

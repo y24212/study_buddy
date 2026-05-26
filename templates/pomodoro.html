@@ -1,0 +1,102 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\pomodoro.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="pomodoro-container">
+    <!-- 今日完成数 -->
+    <div class="mb-6">
+        <span class="text-muted text-sm">今日已完成</span>
+        <span id="today-count" class="text-primary h2 ml-3">{{ today_count }}</span>
+        <span class="text-muted text-sm">个番茄钟</span>
+    </div>
+
+    <!-- 计时器显示 -->
+    <div class="pomodoro-circle-wrapper">
+        <svg class="pomodoro-progress">
+            <circle class="pomodoro-progress-circle" cx="180" cy="180" r="175" />
+            <circle class="pomodoro-progress-circle active" cx="180" cy="180" r="175" id="progress-ring" />
+        </svg>
+        <div class="pomodoro-circle">
+            <div class="pomodoro-inner">
+                <div class="pomodoro-label" id="timer-title">专注时间</div>
+                <div class="pomodoro-timer" id="timer-display">25:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置区域 -->
+    <div class="pomodoro-settings mb-6">
+        <div class="row justify-content-center gap-4">
+            <div class="col-md-3">
+                <label class="form-label text-sm font-medium text-secondary">专注时长（分钟）</label>
+                <input type="number" id="focus-duration" class="form-control" value="25" min="5" max="60">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-sm font-medium text-secondary">休息时长（分钟）</label>
+                <input type="number" id="break-duration" class="form-control" value="5" min="1" max="30">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-sm font-medium text-secondary">关联任务</label>
+                <select id="task-select" class="form-select">
+                    <option value="">不关联任务</option>
+                    {% for task in tasks %}
+                    <option value="{{ task.id }}">{{ task.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- 控制按钮 -->
+    <div class="pomodoro-controls">
+        <button id="stop-btn" class="pomodoro-control-btn reset" title="重置">
+            <i class="fas fa-stop"></i>
+        </button>
+        <button id="start-btn" class="pomodoro-control-btn start" title="开始">
+            <i class="fas fa-play"></i>
+        </button>
+        <button id="pause-btn" class="pomodoro-control-btn pause" style="display: none;" title="暂停">
+            <i class="fas fa-pause"></i>
+        </button>
+    </div>
+
+    <!-- 白噪音控制 -->
+    <div class="mt-8">
+        <div class="d-flex justify-content-center align-items-center gap-3">
+            <button id="white-noise-btn" class="btn btn-outline-primary">
+                <i class="fas fa-volume-up"></i> 白噪音
+            </button>
+            <select id="noise-select" class="form-select w-auto">
+                <option value="rain">雨声</option>
+                <option value="library">图书馆</option>
+                <option value="cafe">咖啡馆</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- 中断原因弹窗 -->
+<div class="modal fade" id="interrupt-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">中断原因</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <select id="interrupt-reason" class="form-select">
+                    <option value="喝水">喝水</option>
+                    <option value="接电话">接电话</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" id="confirm-interrupt" class="btn btn-primary">确认中断</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/pomodoro.js') }}"></script>
+{% endblock %}

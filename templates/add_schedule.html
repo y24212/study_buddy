@@ -1,0 +1,99 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\add_schedule.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-primary">添加课程</h2>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label">课程名称 *</label>
+                    <input type="text" name="course_name" class="form-control" placeholder="如：高等数学" required>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <label class="form-label">授课教师</label>
+                    <input type="text" name="teacher" class="form-control" placeholder="如：张老师">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label">上课地点</label>
+                    <input type="text" name="location" class="form-control" placeholder="如：教学楼A302">
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <label class="form-label">周次范围</label>
+                    <input type="text" name="week_range" class="form-control" placeholder="如：1-16 或 单周 或 双周">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <label class="form-label">星期 *</label>
+                    <select name="day_of_week" class="form-select" required>
+                        <option value="">请选择</option>
+                        <option value="1">周一</option>
+                        <option value="2">周二</option>
+                        <option value="3">周三</option>
+                        <option value="4">周四</option>
+                        <option value="5">周五</option>
+                        <option value="6">周六</option>
+                        <option value="7">周日</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <label class="form-label">开始节次 *</label>
+                    <select name="start_period" class="form-select" required>
+                        {% for i in range(1, 13) %}
+                        <option value="{{ i }}">第{{ i }}节</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <label class="form-label">结束节次 *</label>
+                    <select name="end_period" class="form-select" required>
+                        {% for i in range(1, 13) %}
+                        <option value="{{ i }}">第{{ i }}节</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">添加课程</button>
+                <a href="{{ url_for('schedule') }}" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h5 class="text-primary mb-3">📌 快捷添加</h5>
+        <div class="row">
+            {% for course in quick_courses %}
+            <div class="col-md-3 mb-2">
+                <button class="btn btn-outline-primary btn-sm w-100" onclick="fillCourse('{{ course.name }}', '{{ course.teacher }}')">
+                    {{ course.name }}
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function fillCourse(name, teacher) {
+    document.querySelector('input[name="course_name"]').value = name;
+    document.querySelector('input[name="teacher"]').value = teacher;
+}
+</script>
+{% endblock %}

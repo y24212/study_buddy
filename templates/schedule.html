@@ -1,0 +1,80 @@
+<!-- c:\Users\Lenovo\PycharmProjects\study_buddy\templates\schedule.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">课程表</h2>
+    <div class="d-flex gap-2">
+        <button id="toggle-visibility" class="btn btn-outline-primary">
+            {{ '设为仅自己可见' if schedules and schedules[0].visibility == 2 else '设为搭子可见' }}
+        </button>
+        <a href="{{ url_for('add_schedule') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> 添加课程
+        </a>
+        <a href="{{ url_for('import_schedule') }}" class="btn btn-outline-primary">
+            <i class="fas fa-download"></i> 一键导入
+        </a>
+    </div>
+</div>
+
+<!-- 课表表格 -->
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>时间</th>
+                    {% for day in week_days %}
+                    <th>{{ day.strftime('%m-%d') }}<br>{{ ['日','一','二','三','四','五','六'][day.weekday()] }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for period in range(1, 13) %}
+                <tr>
+                    <td>第{{ period }}节</td>
+                    {% for day in week_days %}
+                    <td>
+                        {% set day_of_week = day.isoweekday() %}
+                        {% set day_schedules = schedules | selectattr('day_of_week', 'equalto', day_of_week) | list %}
+                        {% for schedule in day_schedules %}
+                            {% if schedule.start_period <= period <= schedule.end_period %}
+                                <div class="bg-primary bg-opacity-20 rounded p-2 mb-1">
+                                    <p class="font-weight-bold text-primary">{{ schedule.course_name }}</p>
+                                    {% if schedule.location %}
+                                    <p class="text-sm text-muted">{{ schedule.location }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+document.getElementById('toggle-visibility').addEventListener('click', function() {
+    const visibility = '{{ schedules[0].visibility if schedules else "private" }}';
+    const newVisibility = visibility === 'private' ? 'all_buddies' : 'private';
+    
+    fetch('/update_schedule_visibility', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ visibility: newVisibility })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+});
+</script>
+{% endblock %}
