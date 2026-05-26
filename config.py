@@ -9,9 +9,19 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-strong-secret-key-change-this-in-production'
     
     # 数据库连接配置
-    # 本地开发: mysql+pymysql://root:@localhost/study_buddy
-    # PythonAnywhere: mysql+pymysql://username:password@username.mysql.pythonanywhere-services.com/username$study_buddy
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'mysql+pymysql://root:@localhost/study_buddy'
+    # Render PostgreSQL: postgresql://username:password@host:port/database
+    # 本地开发（SQLite）: sqlite:///app.db
+    # MySQL: mysql+pymysql://username:password@host/database
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    
+    # 根据环境选择数据库
+    if DATABASE_URL and DATABASE_URL.startswith('postgresql://'):
+        SQLALCHEMY_DATABASE_URI = DATABASE_URL.replace('postgres://', 'postgresql://')
+    elif DATABASE_URL:
+        SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    else:
+        # 默认使用 SQLite（开发环境）
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'app.db')
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
